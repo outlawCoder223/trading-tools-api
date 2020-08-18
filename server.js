@@ -16,16 +16,12 @@ app.get(
   '/api/v1/stocks/percent-above/ticker=:ticker&percent=:percent&time=:time',
   (req, res) => {
     const { ticker, percent, time } = req.params;
-    console.log(ticker);
-    console.log(percent);
-    console.log(time);
     const today = Math.floor(Date.now() / 1000);
     const URL = `https://finnhub.io/api/v1/stock/candle?symbol=${ticker}&resolution=D&from=${time}&to=${today}&token=${API_KEY}`;
     axios
       .get(URL)
       .then((response) => {
         const results = findFluctuations(response.data, percent);
-        console.log(results);
         res.json(results);
       })
       .catch((error) => {
@@ -34,6 +30,14 @@ app.get(
       });
   }
 );
+
+axios
+  .get(
+    'https://finnhub.io/api/v1/stock/symbol?exchange=US&token=bsta22v48v6ug49hg0n0'
+  )
+  .then((response) => {
+    console.log(response.data);
+  });
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
