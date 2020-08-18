@@ -16,17 +16,17 @@ app.get(
   '/api/v1/stocks/percent-above/ticker=:ticker&percent=:percent&time=:time',
   (req, res) => {
     const { ticker, percent, time } = req.params;
-    console.log(ticker);
-    console.log(percent);
-    console.log(time);
     const today = Math.floor(Date.now() / 1000);
     const URL = `https://finnhub.io/api/v1/stock/candle?symbol=${ticker}&resolution=D&from=${time}&to=${today}&token=${API_KEY}`;
     axios
       .get(URL)
       .then((response) => {
-        const results = findFluctuations(response.data, percent);
-        console.log(results);
-        res.json(results);
+        if (response.data.s === 'no_data') {
+          res.json({ error: 'Could not find any data for that stock' });
+        } else {
+          const results = findFluctuations(response.data, percent);
+          res.json(results);
+        }
       })
       .catch((error) => {
         console.log(error);
