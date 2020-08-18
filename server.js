@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const axios = require('axios');
+const findFluctuations = require('./helpers/findFluctuations');
 const app = express();
 dotenv.config();
 const port = process.env.PORT || 3000;
@@ -18,11 +19,13 @@ app.get(
     axios
       .get(URL)
       .then((response) => {
-        console.log(response.data);
-        res.send(response.data);
+        const results = findFluctuations(response.data, percent);
+        console.log(results);
+        res.json(results);
       })
       .catch((error) => {
         console.log(error);
+        res.status(500).json({ error: 'error' });
       });
   }
 );
