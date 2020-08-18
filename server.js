@@ -21,8 +21,12 @@ app.get(
     axios
       .get(URL)
       .then((response) => {
-        const results = findFluctuations(response.data, percent);
-        res.json(results);
+        if (response.data.s === 'no_data') {
+          res.json({ error: 'Could not find any data for that stock' });
+        } else {
+          const results = findFluctuations(response.data, percent);
+          res.json(results);
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -30,14 +34,6 @@ app.get(
       });
   }
 );
-
-axios
-  .get(
-    'https://finnhub.io/api/v1/stock/symbol?exchange=US&token=bsta22v48v6ug49hg0n0'
-  )
-  .then((response) => {
-    console.log(response.data);
-  });
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
