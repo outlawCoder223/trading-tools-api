@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const axios = require('axios');
 const cors = require('cors');
+const morgan = require('morgan');
 const findFluctuations = require('./helpers/findFluctuations');
 const app = express();
 dotenv.config();
@@ -9,6 +10,7 @@ const port = process.env.PORT || 3001;
 const API_KEY = process.env.API_KEY;
 
 app.use(cors());
+app.use(morgan('combined'));
 
 app.get(
   '/api/v1/stocks/percent-above/ticker=:ticker&percent=:percent&time=:time',
