@@ -1,9 +1,11 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const axios = require('axios');
+const moment = require('moment');
 const cors = require('cors');
 const morgan = require('morgan');
 const findFluctuations = require('./helpers/findFluctuations');
+const getTimeOffset = require('./helpers/getTimeOffset');
 const app = express();
 dotenv.config();
 const port = process.env.PORT || 3001;
@@ -16,8 +18,9 @@ app.get(
   '/api/v1/stocks/percent-above/ticker=:ticker&percent=:percent&time=:time',
   (req, res) => {
     const { ticker, percent, time } = req.params;
-    const today = Math.floor(Date.now() / 1000);
-    const URL = `https://finnhub.io/api/v1/stock/candle?symbol=${ticker}&resolution=D&from=${time}&to=${today}&token=${API_KEY}`;
+    const timeOffset = getTimeOffset(time);
+    const today = moment().utc().format('X');
+    const URL = `https://finnhub.io/api/v1/stock/candle?symbol=${ticker}&resolution=D&from=${timeOffset}&to=${today}&token=${API_KEY}`;
     axios
       .get(URL)
       .then((response) => {
